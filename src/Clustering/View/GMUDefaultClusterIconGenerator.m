@@ -126,7 +126,7 @@ static NSArray<UIColor *> *kGMUBucketBackgroundColors;
 
   UIFont *font = [UIFont boldSystemFontOfSize:12];
   CGSize size = image.size;
-  UIGraphicsBeginImageContextWithOptions(size, NO, 0.0f);
+  UIGraphicsBeginImageContext(size);
   [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
   CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
 

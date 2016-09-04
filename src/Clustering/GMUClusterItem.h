@@ -14,6 +14,8 @@
  */
 
 #import <CoreLocation/CoreLocation.h>
+#import <GoogleMaps/GoogleMaps.h>
+
 
 /**
  * This protocol defines the contract for a cluster item.
@@ -24,6 +26,8 @@
  * Returns the position of the item.
  */
 @property(nonatomic, readonly) CLLocationCoordinate2D position;
+
+@property (nonatomic,strong) GMSMarker *marker;
 
 @end
 

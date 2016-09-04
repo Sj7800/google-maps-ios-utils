@@ -24,6 +24,8 @@
 #import "GMUClusterIconGenerator.h"
 #import "GMUWrappingDictionaryKey.h"
 
+#import "GMUClusterItem.h"
+
 // Clusters smaller than this threshold will be expanded.
 static const NSUInteger kGMUMinClusterSize = 4;
 
@@ -72,7 +74,6 @@ static const double kGMUAnimationDuration = 0.5;  // seconds.
     _renderedClusters = [[NSMutableSet alloc] init];
     _renderedClusterItems = [[NSMutableSet alloc] init];
     _animatesClusters = YES;
-    _zIndex = 1;
   }
   return self;
 }
@@ -246,10 +247,14 @@ static const double kGMUAnimationDuration = 0.5;  // seconds.
 }
 
 - (void)renderCluster:(id<GMUCluster>)cluster animated:(BOOL)animated {
-  float zoom = _mapView.camera.zoom;
-  if ([self shouldRenderAsCluster:cluster atZoom:zoom]) {
+  
+    float zoom = _mapView.camera.zoom;
+  
+    if ([self shouldRenderAsCluster:cluster atZoom:zoom]) {
     CLLocationCoordinate2D fromPosition;
-    if (animated) {
+   
+      if (animated) {
+          
       id<GMUCluster> fromCluster =
           [self overlappingClusterForCluster:cluster itemMap:_itemToOldClusterMap];
       animated = fromCluster != nil;
@@ -257,17 +262,26 @@ static const double kGMUAnimationDuration = 0.5;  // seconds.
     }
 
     UIImage *icon = [_clusterIconGenerator iconForSize:cluster.count];
+    
     GMSMarker *marker = [self markerWithPosition:cluster.position
                                             from:fromPosition
                                         userData:cluster
                                      clusterIcon:icon
                                         animated:animated];
+    
+        
+      
     [_markers addObject:marker];
-  } else {
+  
+    } else {
     for (id<GMUClusterItem> item in cluster.items) {
-      CLLocationCoordinate2D fromPosition;
-      BOOL shouldAnimate = animated;
-      if (shouldAnimate) {
+      
+        CLLocationCoordinate2D fromPosition;
+      
+        BOOL shouldAnimate = animated;
+      
+        
+        if (shouldAnimate) {
         GMUWrappingDictionaryKey *key = [[GMUWrappingDictionaryKey alloc] initWithObject:item];
         id<GMUCluster> fromCluster = [_itemToOldClusterMap objectForKey:key];
         shouldAnimate = fromCluster != nil;
@@ -279,6 +293,11 @@ static const double kGMUAnimationDuration = 0.5;  // seconds.
                                           userData:item
                                        clusterIcon:nil
                                           animated:shouldAnimate];
+        
+        marker.title = item.marker.title;
+        marker.snippet = item.marker.snippet;
+        marker.icon = item.marker.icon;
+        
       [_markers addObject:marker];
       [_renderedClusterItems addObject:item];
     }
@@ -300,7 +319,6 @@ static const double kGMUAnimationDuration = 0.5;  // seconds.
     marker.icon = clusterIcon;
     marker.groundAnchor = CGPointMake(0.5, 0.5);
   }
-  marker.zIndex = _zIndex;
   marker.map = _mapView;
 
   if (animated) {
